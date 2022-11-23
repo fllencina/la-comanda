@@ -12,9 +12,9 @@ class ItemsPedido
     public function crearItemPedido()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO ItemsPedido (idproducto, idpedido,cantidad,idestado) VALUES (:idproducto, :idpedido,:cantidad,:idestado");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO ItemsPedido (idproducto, idpedido,cantidad,idestado) VALUES (:idproducto, :idpedido,:cantidad,:idestado)");
         
-        $consulta->bindValue(':idproducto', $this->descripcion, PDO::PARAM_INT);
+        $consulta->bindValue(':idproducto', $this->idproducto, PDO::PARAM_INT);
         $consulta->bindValue(':idpedido', $this->idpedido, PDO::PARAM_INT);
         $consulta->bindValue(':cantidad', $this->cantidad, PDO::PARAM_INT);
         $consulta->bindValue(':idestado', $this->idestado, PDO::PARAM_INT);

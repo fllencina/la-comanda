@@ -1,5 +1,7 @@
 <?php
 require_once './models/Pedido.php';
+require_once './models/ItemsPedido.php';
+
 
 
 class PedidoController extends Pedido
@@ -14,10 +16,10 @@ class PedidoController extends Pedido
         $ped->id =substr(str_shuffle($permitted_chars), 0, 5);  
         $ped->idmesa = $parametros['idmesa'];
         $ped->idusuario = $parametros['idusuario'];
-        $ped->fechamodificado = $parametros['fechamodificado'];
-        $ped->tiempoestimado = $parametros['tiempoestimado'];
+        // $ped->fechamodificado = $parametros['fechamodificado'];
+        // $ped->tiempoestimado = $parametros['tiempoestimado'];
         date_default_timezone_set("America/Buenos_Aires");
-        $ped->fechaalta = date("Y-m-d");
+        $ped->fechaalta = date("Y-m-d H:i:s");
         //inicialmente queda como pendiente
         //Estados pedido
         // 1 pendiente
@@ -34,15 +36,17 @@ class PedidoController extends Pedido
         foreach($arrayItems as $item)
         {
           $arrayItemsCantidad=explode("=", $item);
-          $prod = Producto::obtenerProducto($arrayItemsCantidad[0]);
+          $prod = Productos::obtenerProducto($arrayItemsCantidad[0]);
           $itemCrear = new ItemsPedido();
           $itemCrear->idproducto=$prod->id;
           $itemCrear->idpedido=$ped->id;
           $itemCrear->cantidad=$arrayItemsCantidad[1];
-          $itemCrear->idEstado=1;
+          $itemCrear->idestado=1;
           $itemCrear->crearItemPedido();
         }
-        
+        $mesa=Mesa::obtenerMesa($parametros['idmesa']);
+        $mesa->idestadomesa=1;
+        $mesa->modificarMesa();
 
         $payload = json_encode(array("mensaje" => "Pedido creado con exito"));
 
@@ -66,6 +70,17 @@ class PedidoController extends Pedido
     public function TraerTodos($request, $response, $args)
     {
         $lista = Pedido::obtenerTodos();
+        $payload = json_encode(array("listaPedido" => $lista));
+
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function TraerTodosPorSector($request, $response, $args)
+    {
+      $id = $args['idsector'];
+        $lista = Pedido::obtenerTodosSector($id);
         $payload = json_encode(array("listaPedido" => $lista));
 
         $response->getBody()->write($payload);

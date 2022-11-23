@@ -14,6 +14,7 @@ class LoginController extends Usuario{
     {
         $datos=$request->getParsedBody();
         $UsuarioLogin=Usuario::obtenerUsuario($datos['usuario']);
+        var_dump($UsuarioLogin);
         $data['usuario']=$datos['usuario'];
         if(password_verify($datos['clave'], $UsuarioLogin->clave )){
 

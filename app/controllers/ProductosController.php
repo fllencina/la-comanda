@@ -1,13 +1,13 @@
 <?php
-require_once './models/Producto.php';
+require_once './models/Productos.php';
 
 
-class ProductoController extends Producto 
+class ProductosController extends Productos 
 {
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-        $prod = new Producto();
+        $prod = new Productos();
         $prod->descripcion = $parametros['descripcion'];
         $prod->idsector = $parametros['idsector'];
         $prod->precio = $parametros['precio'];
@@ -25,7 +25,7 @@ class ProductoController extends Producto
     {
         // Buscamos usuario por nombre
         $prod = $args['descripcion'];
-        $producto = Producto::obtenerProducto($prod);
+        $producto = Productos::obtenerProducto($prod);
         $payload = json_encode($producto);
 
         $response->getBody()->write($payload);
@@ -35,7 +35,7 @@ class ProductoController extends Producto
 
     public function TraerTodos($request, $response, $args)
     {
-        $lista = Producto::obtenerTodos();
+        $lista = Productos::obtenerTodos();
         $payload = json_encode(array("listaProducto" => $lista));
 
         $response->getBody()->write($payload);
@@ -48,7 +48,7 @@ class ProductoController extends Producto
         $parametros = $request->getParsedBody();
 
         $id = $parametros['id'];
-        Producto::modificarProducto($id);
+        Productos::modificarProducto($id);
 
         $payload = json_encode(array("mensaje" => "Producto modificado con exito"));
 

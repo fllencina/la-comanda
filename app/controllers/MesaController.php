@@ -10,7 +10,7 @@ class MesaController extends Mesa
 
         $Mesa = new Mesa();
         $Mesa->descripcion = $parametros['descripcion'];
-        $Mesa->idestadomesa = $parametros['idestado'];
+        $Mesa->idestadomesa = 4;
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
         $Mesa->id =substr(str_shuffle($permitted_chars), 0, 5);  
 

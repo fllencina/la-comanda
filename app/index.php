@@ -22,7 +22,7 @@ require_once './controllers/PersonaController.php';
 require_once './controllers/PedidoController.php';
 require_once './controllers/EncuestaController.php';
 require_once './controllers/MesaController.php';
-require_once './controllers/ProductoController.php';
+require_once './controllers/ProductosController.php';
 require_once './controllers/LoginController.php';
 
 
@@ -61,10 +61,10 @@ $app->group('/Persona', function (RouteCollectorProxy $group) {
   })->add(new EsSocioMiddleWare());
 
   $app->group('/Producto', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \ProductoController::class . ':TraerTodos');
-    $group->get('/{nombreProducto}', \ProductoController::class . ':TraerUno');
-    $group->post('/Alta', \ProductoController::class . ':CargarUno');  
-    $group->post('/Modificar', \ProductoController::class . ':ModificarUno');
+    $group->get('[/]', \ProductosController::class . ':TraerTodos');
+    $group->get('/{nombreProducto}', \ProductosController::class . ':TraerUno');
+    $group->post('/Alta', \ProductosController::class . ':CargarUno');  
+    $group->post('/Modificar', \ProductosController::class . ':ModificarUno');
     
   });
   $app->group('/Mesa', function (RouteCollectorProxy $group) {
@@ -82,10 +82,12 @@ $app->group('/Persona', function (RouteCollectorProxy $group) {
 
   $app->group('/Pedido', function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
-    $group->get('/{idproducto}/{idpedido}', \PedidoController::class . ':TraerUno');
+    $group->get('/TraerUno/{idproducto}/{idpedido}', \PedidoController::class . ':TraerUno');
     $group->post('/Alta', \PedidoController::class . ':CargarUno')->add(new EsMozoMiddleWare());  
     $group->post('/ModificarPedido', \PedidoController::class . ':ModificarUno');  
-    $group->post('/ModificarItemPedido', \PedidoController::class . ':ModificarItemPedido');  
+    $group->post('/ModificarItemPedido', \PedidoController::class . ':ModificarItemPedido'); 
+    $group->get('/listarPendientes/{idsector}', \PedidoController::class . ':TraerTodosPorSector'); 
+
 
   });
 
