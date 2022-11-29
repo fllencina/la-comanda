@@ -26,6 +26,8 @@ require_once './controllers/EncuestaController.php';
 require_once './controllers/MesaController.php';
 require_once './controllers/ProductosController.php';
 require_once './controllers/LoginController.php';
+require_once './controllers/ActividadController.php';
+
 
 
 
@@ -100,9 +102,12 @@ $app->group('/Persona', function (RouteCollectorProxy $group) {
     //cambiar estado item pedido SOLO PREPARADORES
     $group->post('/ModificarEstadoItemPedido', \PedidoController::class . ':ModificarEstadoItemPedido')->add(new EsPreparadorMiddleWare()); 
    
+
   });
 
 
+$app->get('/Actividad', \ActividadController::class . ':ExportarCSV');
+$app->post('/Actividad', \ActividadController::class . ':ImportarCSV');
 
 
 

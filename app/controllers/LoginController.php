@@ -29,6 +29,7 @@ class LoginController extends Usuario{
                 $actividad=new Actividad();
                 $actividad->userid=$UsuarioLogin->id;
                 $actividad->fecha=date("Y-m-d H:i:s");
+                //echo date("Y-m-d H:i:s");
                 $actividad->accion=1;
                 $actividad->crear();
                 $payload = json_encode(array('jwt' => $token));
