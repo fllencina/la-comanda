@@ -15,6 +15,8 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once './db/AccesoDatos.php';
 require_once './middlewares/EsSocioMiddleWare.php';
 require_once './middlewares/EsMozoMiddleWare.php';
+require_once './middlewares/EsPreparadorMiddleWare.php';
+
 
 
 require_once './controllers/UsuarioController.php';
@@ -64,41 +66,44 @@ $app->group('/Persona', function (RouteCollectorProxy $group) {
     $group->get('[/]', \ProductosController::class . ':TraerTodos');
     $group->get('/{nombreProducto}', \ProductosController::class . ':TraerUno');
     $group->post('/Alta', \ProductosController::class . ':CargarUno');  
-    $group->post('/Modificar', \ProductosController::class . ':ModificarUno');
-    
-  });
+    $group->post('/Modificar', \ProductosController::class . ':ModificarUno');    
+  })->add(new EsSocioMiddleWare());
+
   $app->group('/Mesa', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \MesaController::class . ':TraerTodos');
-    $group->get('/{id}', \MesaController::class . ':TraerUno');
-    $group->post('/Alta', \MesaController::class . ':CargarUno');  
-    $group->post('/Modificar', \MesaController::class . ':ModificarUno');
-    
-  });
+    $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new EsSocioMiddleWare());
+    $group->get('/{id}', \MesaController::class . ':TraerUno')->add(new EsSocioMiddleWare());
+    $group->post('/Alta', \MesaController::class . ':CargarUno')->add(new EsSocioMiddleWare()); 
+    $group->post('/Modificar', \MesaController::class . ':ModificarUno')->add(new EsMozoMiddleWare());; 
+  
+  $group->post('/Cerrar', \MesaController::class . ':ModificarUno')->add(new EsSocioMiddleWare()); 
+});
+
   $app->group('/Encuesta', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \EncuestaController::class . ':TraerTodos');
-    $group->get('/{numMesa}', \EncuestaController::class . ':TraerUno');
-    $group->post('/Alta', \EncuestaController::class . ':CargarUno');       
+    $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(new EsSocioMiddleWare());
+    $group->get('/{numMesa}', \EncuestaController::class . ':TraerUno')->add(new EsSocioMiddleWare());
+    $group->post('/Alta', \EncuestaController::class . ':CargarUno'); //cliente      
   });
 
   $app->group('/Pedido', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \PedidoController::class . ':TraerTodos');
+    $group->get('/TraerTodos', \PedidoController::class . ':TraerTodos')->add(new EsSocioMiddleWare());
+    $group->get('/TraerTodosEstado/{idestado}', \PedidoController::class . ':TraerTodosEstado')->add(new EsSocioMiddleWare());
+    $group->get('/TraerTodosSector/{idsector}', \PedidoController::class . ':TraerTodosPorSector')->add(new EsSocioMiddleWare());
+    //traer los pendientes de sector para que lo puedan tomar los preparadores
+    $group->get('/TraerTodosPendientesSector/{idsector}', \PedidoController::class . ':TraerTodosPendientesSector')->add(new EsPreparadorMiddleWare());
+    $group->get('/TraerTodosUsuario/{idusuario}', \PedidoController::class . ':TraerTodosPorUsuario')->add(new EsSocioMiddleWare());
     $group->get('/TraerUno/{idproducto}/{idpedido}', \PedidoController::class . ':TraerUno');
     $group->post('/Alta', \PedidoController::class . ':CargarUno')->add(new EsMozoMiddleWare());  
-    $group->post('/ModificarPedido', \PedidoController::class . ':ModificarUno');  
-    $group->post('/ModificarItemPedido', \PedidoController::class . ':ModificarItemPedido'); 
-    $group->get('/listarPendientes/{idsector}', \PedidoController::class . ':TraerTodosPorSector'); 
-
-
+    //cambiar estado de pedido SOLO MOZO
+    $group->post('/ModificarEstadoPedido', \PedidoController::class . ':ModificarEstadoUno')->add(new EsMozoMiddleWare()); 
+    $group->post('/AgregarFoto', \PedidoController::class . ':agregarfotopedido')->add(new EsMozoMiddleWare()); 
+    
+    //cambiar estado item pedido SOLO PREPARADORES
+    $group->post('/ModificarEstadoItemPedido', \PedidoController::class . ':ModificarEstadoItemPedido')->add(new EsPreparadorMiddleWare()); 
+   
   });
 
 
 
 
-$app->get('[/]', function (Request $request, Response $response) {    
-    $payload = json_encode(array("mensaje" => "Slim Framework 4 PHP"));
-    
-    $response->getBody()->write($payload);
-    return $response->withHeader('Content-Type', 'application/json');
-});
 
 $app->run();

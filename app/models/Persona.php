@@ -19,7 +19,6 @@ class Persona
         $consulta->bindValue(':apellido', $this->apellido, PDO::PARAM_STR);
         $consulta->bindValue(':fechaalta', $this->fechaalta, PDO::PARAM_STR);
        
-
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();

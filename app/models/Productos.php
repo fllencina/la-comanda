@@ -42,6 +42,15 @@ class Productos
 
         return $consulta->fetchObject('Productos');
     }
+    public static function obtenerProductoPorID($id)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM productos WHERE id = :id");
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+        $consulta->execute();
+
+        return $consulta->fetchObject('Productos');
+    }
 
     public  function modificarProducto()
     {

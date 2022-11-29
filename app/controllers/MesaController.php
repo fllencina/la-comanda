@@ -47,19 +47,55 @@ class MesaController extends Mesa
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-
+        $header = $request->getHeaderLine('Authorization');
+        if(isset($header) && $header)
+        {
+          $token = trim(explode("Bearer", $header)[1]);
+          $data=AutentificadorJWT::ObtenerData($token);
+          $UsuarioLogin=Usuario::obtenerUsuario($data->usuario);
+       }
         $id = $parametros['id'];
         
-        //estados mesa
-        //1 con cliente esperando pedido
-        //2 con cliente comiendo
-        //3 con cliente pagando
-        //4 cerrada
         $Mesa=Mesa::obtenerMesa($id);
-        $Mesa->idestado=$parametros['idestado'];
-        Mesa::modificarMesa($Mesa);
+        $modificar=true;
+        $mensaje='Mesa modificada con exito';
+        $cerrar=false;
 
-        $payload = json_encode(array("mensaje" => "Mesa modificada con exito"));
+        if(($parametros['idestado']==1 && $Mesa->idestadomesa==4)||($parametros['idestado']==2 && $Mesa->idEstadoMesa==1)||($parametros['idestado']==3 && $Mesa->idestadomesa==2))
+        {
+          $Mesa->idestadomesa=$parametros['idestado'];          
+        }
+        else if($parametros['idestado']==4 && $Mesa->idestadomesa==3 && $data->rol==10)
+          {
+            $Mesa->idestadomesa=$parametros['idestado'];
+            $cerrar=true;
+          }
+        
+        else{
+          $modificar=false;
+          $mensaje="No se pudo modificar la mesa, el estado que intenta establecer no concuerda con el estado previo. o no cuenta con los permisos para realizarlo.";
+        }
+        if($modificar==true)
+        { 
+          $Mesa->modificarMesa();
+          
+            $actividad=new Actividad();
+            $actividad->userid=$UsuarioLogin->id;
+            $actividad->fecha=date("Y-m-d H:i:s");
+            if($cerrar==true)
+            {
+              $actividad->accion=9;
+            }
+            else{
+              $actividad->accion=10;
+            }
+            
+            $actividad->observaciones=$Mesa->id;
+            $actividad->crear();
+            
+        }
+
+        $payload = json_encode(array("mensaje" =>  $mensaje));
 
         $response->getBody()->write($payload);
         return $response

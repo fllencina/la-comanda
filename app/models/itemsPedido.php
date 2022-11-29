@@ -7,6 +7,8 @@ class ItemsPedido
     public $cantidad;
     public $tiempoestimado;
     public $idestado;
+    public $fechainiciopreparacion;
+    public $fechalisto;
     
 
     public function crearItemPedido()
@@ -32,13 +34,23 @@ class ItemsPedido
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'ItemsPedido');
     }
+    public static function obtenerTodosLosItemsPorIdPedido($idpedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM ItemsPedido where idpedido=:idpedido");
+        $consulta->bindValue(':idpedido', $idpedido, PDO::PARAM_INT);
 
-    public static function obtenerItemPedido($idproducto,$idPedido)
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_CLASS, 'ItemsPedido');
+    }
+
+    public static function obtenerItemPedido($idproducto,$idpedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM ItemsPedido WHERE idproducto = :idproducto and idpedido=:idpedido");
         $consulta->bindValue(':idproducto', $idproducto, PDO::PARAM_INT);
-        $consulta->bindValue(':idPedido', $idPedido, PDO::PARAM_INT);
+        $consulta->bindValue(':idpedido', $idpedido, PDO::PARAM_INT);
 
         $consulta->execute();
 
@@ -48,10 +60,15 @@ class ItemsPedido
     public  function modificarItemPedido()
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE ItemsPedido SET idestado = :idestado   WHERE idproducto = :idproducto and idpedido=:idpedido");
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE ItemsPedido SET idestado = :idestado ,tiempoestimado=:tiempoestimado ,fechainiciopreparacion=:fechainiciopreparacion, fechalisto=:fechalisto  WHERE idproducto = :idproducto and idpedido=:idpedido");
         $consulta->bindValue(':idestado', $this->idestado, PDO::PARAM_INT);
         $consulta->bindValue(':idproducto', $this->idproducto, PDO::PARAM_INT);
-        $consulta->bindValue(':idPedido',  $this->idpedido, PDO::PARAM_INT);
+        $consulta->bindValue(':idpedido',  $this->idpedido, PDO::PARAM_INT);
+        $consulta->bindValue(':tiempoestimado',  $this->tiempoestimado, PDO::PARAM_STR);
+        $consulta->bindValue(':fechainiciopreparacion',  $this->fechainiciopreparacion, PDO::PARAM_STR);
+        $consulta->bindValue(':fechalisto',  $this->fechalisto, PDO::PARAM_STR);
+
+
     
       
         $consulta->execute();

@@ -7,6 +7,7 @@ require_once './models/AutentificadorJWT.php';
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
+require_once "./models/Actividad.php";
 
 class LoginController extends Usuario{
 
@@ -23,8 +24,13 @@ class LoginController extends Usuario{
                 $data['rol']=$UsuarioLogin->idrol;
                 $token = AutentificadorJWT::CrearToken($data);
                 date_default_timezone_set("America/Buenos_Aires");
-                $UsuarioLogin->fechaultimologin=date("Y-m-d");
+                $UsuarioLogin->fechaultimologin=date("Y-m-d H:i:s");
                 $UsuarioLogin->modificarUsuario();
+                $actividad=new Actividad();
+                $actividad->userid=$UsuarioLogin->id;
+                $actividad->fecha=date("Y-m-d H:i:s");
+                $actividad->accion=1;
+                $actividad->crear();
                 $payload = json_encode(array('jwt' => $token));
             }
             else{

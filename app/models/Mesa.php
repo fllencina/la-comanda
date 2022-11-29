@@ -46,7 +46,7 @@ class Mesa
         $consulta = $objAccesoDato->prepararConsulta("UPDATE Mesa SET  idestadomesa = :idestadomesa   WHERE id = :id");
       
         $consulta->bindValue(':idestadomesa', $this->idestadomesa, PDO::PARAM_STR);
-        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $consulta->bindValue(':id', $this->id, PDO::PARAM_STR);
         $consulta->execute();
     }
 

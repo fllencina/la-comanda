@@ -7,25 +7,28 @@ class UsuarioController extends Usuario implements IApiUsable
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
+        $UsuarioExistente=Usuario::obtenerUsuario($parametros['usuario']);
 
-        // Creamos el usuario
-        $usr = new Usuario();
-        $usr->usuario = $parametros['usuario'];
-        $usr->clave = $parametros['clave'];
-        $usr->mail = $parametros['mail'];
-        $usr->idpersona = $parametros['idpersona'];
-        $usr->idrol = $parametros['idrol'];
-        $usr->idsector = $parametros['idsector'];
-
-        date_default_timezone_set("America/Buenos_Aires");
-        $usr->fechaalta = date("Y-m-d");
-        $usr->estado = 'Activo';
-       
-        $usr->crearUsuario();
-
-        $payload = json_encode(array("mensaje" => "Usuario creado con exito"));
-
-        $response->getBody()->write($payload);
+     
+        if(!isset($UsuarioExistente) || !$UsuarioExistente  )
+        {
+            $usr = new Usuario();
+            $usr->usuario = $parametros['usuario'];
+            $usr->clave = $parametros['clave'];
+            $usr->mail = $parametros['mail'];
+            $usr->idpersona = $parametros['idpersona'];
+            $usr->idrol = $parametros['idrol'];
+            $usr->idsector = $parametros['idsector'];
+            date_default_timezone_set("America/Buenos_Aires");
+            $usr->fechaalta = date("Y-m-d H:i:s");
+            $usr->estado = 'Activo'; 
+            $usr->crearUsuario();
+            $payload = json_encode(array("mensaje" => "Usuario creado con exito"));   
+      }
+      else{
+        $payload = json_encode(array("mensaje" => "El usuario ya existe."));  
+      }
+      $response->getBody()->write($payload);
         return $response
           ->withHeader('Content-Type', 'application/json');
     }
