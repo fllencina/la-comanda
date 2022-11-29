@@ -109,7 +109,7 @@ class PedidoController extends Pedido
     }
     public function TraerTodosPendientesSector($request, $response, $args)
     {
-      $id = $args['idsector'];
+        $id = $args['idsector'];
         $lista = Pedido::obtenerTodosPendientesSector($id);
         $payload = json_encode(array("listaPedido" => $lista));
 

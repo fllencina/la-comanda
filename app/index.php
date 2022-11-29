@@ -109,6 +109,7 @@ $app->group('/Persona', function (RouteCollectorProxy $group) {
 $app->get('/Actividad', \ActividadController::class . ':ExportarCSV');
 $app->post('/Actividad', \ActividadController::class . ':ImportarCSV');
 
+$app->post('/Encuesta', \EncuestaController::class . ':CargarUno');
 
 
 $app->run();

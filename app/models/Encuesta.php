@@ -11,12 +11,13 @@ class Encuesta
     public $idpersona;
     public $fecha;
     public $idmesa;
+    public $idpedido;
     
 
     public function crearEncuesta()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO Encuesta (puntosmesa, puntosrestaurant,puntosmozo,puntoscocinero,comentarios,idpersona,fecha,idmesa) VALUES (:puntosmesa, :puntosrestaurant,:puntosmozo,:puntoscocinero,:comentarios,:idpersona,:fecha,:idmesa)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO Encuesta (puntosmesa, puntosrestaurant,puntosmozo,puntoscocinero,comentarios,idpersona,fecha,idmesa,idpedido) VALUES (:puntosmesa, :puntosrestaurant,:puntosmozo,:puntoscocinero,:comentarios,:idpersona,:fecha,:idmesa,:idpedido)");
         
         $consulta->bindValue(':puntosmesa', $this->puntosmesa, PDO::PARAM_STR);
         $consulta->bindValue(':puntosrestaurant', $this->puntosrestaurant, PDO::PARAM_STR);
@@ -26,6 +27,8 @@ class Encuesta
         $consulta->bindValue(':idpersona', $this->idpersona, PDO::PARAM_INT);
         $consulta->bindValue(':fecha', $this->fecha, PDO::PARAM_STR);
         $consulta->bindValue(':idmesa', $this->idmesa, PDO::PARAM_INT);
+        $consulta->bindValue(':idpedido', $this->idpedido, PDO::PARAM_INT);
+
 
         $consulta->execute();
 

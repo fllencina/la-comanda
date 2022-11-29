@@ -67,11 +67,11 @@ class Pedido
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $sql= "SELECT ped.id as id ,prod.descripcion,ip.cantidad,ped.idmesa,ped.fechaalta,s.nombre as sector,u.usuario as idusuario ,ep.descripcion as idestado , ped.tiempoestimado as tiempoestimado,ped.fechamodificado as fechamodificado 
         FROM `productos` as prod
-        left join itemspedido as ip on ip.idproducto=prod.id and ip.idestado=1
-        left JOIN pedido as ped on ped.id=ip.idPedido
-        left join sectores as s on s.id=prod.idsector
-        left join usuario as u on u.id=ped.idusuario
-        left join estadopedido as ep on ep.id=ip.idestado
+         join itemspedido as ip on ip.idproducto=prod.id and ip.idestado=1
+         JOIN pedido as ped on ped.id=ip.idPedido 
+         join sectores as s on s.id=prod.idsector
+         join usuario as u on u.id=ped.idusuario
+         join estadopedido as ep on ep.id=ip.idestado
         where prod.idsector=:idsector";
 
         $consulta = $objAccesoDatos->prepararConsulta($sql);
