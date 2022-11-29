@@ -13,9 +13,6 @@ class Pedido
     public $totalfacturado;
     
 
-
-
-
     public function crearPedido()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -163,5 +160,25 @@ class Pedido
 
         $consulta->execute();
     }
-    
+    public static function obtenerMesaMasUsada()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT *,count(*) FROM `pedido` group by idmesa");
+        
+        $consulta->execute();
+
+        return $consulta->fetchObject('Pedido');
+    }
+    public  function obtenerPedidoCliente($idpedido,$idmesa)
+    {
+        
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM Pedido WHERE id = :id and idmesa=:idmesa");
+        $consulta->bindValue(':id', $idpedido, PDO::PARAM_STR);
+        $consulta->bindValue(':idmesa', $idmesa, PDO::PARAM_STR);
+
+        $consulta->execute();
+
+        return $consulta->fetchObject('Pedido');
+    }
 }

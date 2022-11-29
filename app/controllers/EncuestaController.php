@@ -45,7 +45,6 @@ class EncuestaController extends Encuesta
 
     public function TraerUno($request, $response, $args)
     {
-        
         $enc = $args['idmesa'];
         $encuesta = Encuesta::obtenerEncuesta($enc);
         $payload = json_encode($encuesta);
@@ -64,7 +63,15 @@ class EncuestaController extends Encuesta
         return $response
           ->withHeader('Content-Type', 'application/json');
     }
-    
+    public function TraerLosMejoresComentarios($request, $response, $args)
+    {
+        $lista = Encuesta::obtenerLosMejoresComentarios();
+        $payload = json_encode(array("listaEncuesta" => $lista));
+
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
+    }
    
    
 }

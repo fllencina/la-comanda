@@ -53,7 +53,14 @@ class Encuesta
 
         return $consulta->fetchObject('Encuesta');
     }
+    public static function obtenerLosMejoresComentarios()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT  * FROM `encuesta`where (puntosrestaurant=5 or puntosrestaurant=4 or puntosrestaurant=3) order by encuesta.puntosrestaurant desc");
+        $consulta->execute();
 
+        return $consulta->fetchAll(PDO::FETCH_CLASS, 'Encuesta');
+    }
    
 
    

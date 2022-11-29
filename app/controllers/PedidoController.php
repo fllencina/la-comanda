@@ -295,10 +295,24 @@ class PedidoController extends Pedido
     }
     $Pedido->tiempoestimado=$max;
     $Pedido->modificarPedido();
-    
-    
-      
+   
     }
+    public function obtenerPedidoDeCliente($request, $response, $args)
+    {
+      $parametros = $request->getParsedBody();
+
+      $idpedido = $parametros['idpedido'];
+      $idmesa = $parametros['idmesa'];
+      
+      $pedido=Pedido::obtenerPedidoCliente( $idpedido,$idmesa);
+     
+      $payload = json_encode(array("mensaje" => "Su pedido estara listo en aproximadamente ".$pedido->tiempoestimado . " minutos"));
+
+      $response->getBody()->write($payload);
+      return $response
+        ->withHeader('Content-Type', 'application/json');
+    }
+    
 
    
 }

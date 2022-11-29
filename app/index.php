@@ -73,17 +73,20 @@ $app->group('/Persona', function (RouteCollectorProxy $group) {
 
   $app->group('/Mesa', function (RouteCollectorProxy $group) {
     $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new EsSocioMiddleWare());
-    $group->get('/{id}', \MesaController::class . ':TraerUno')->add(new EsSocioMiddleWare());
+    $group->get('/UnaMesa/{id}', \MesaController::class . ':TraerUno')->add(new EsSocioMiddleWare());
     $group->post('/Alta', \MesaController::class . ':CargarUno')->add(new EsSocioMiddleWare()); 
-    $group->post('/Modificar', \MesaController::class . ':ModificarUno')->add(new EsMozoMiddleWare());; 
-  
-  $group->post('/Cerrar', \MesaController::class . ':ModificarUno')->add(new EsSocioMiddleWare()); 
+    $group->post('/Modificar', \MesaController::class . ':ModificarUno')->add(new EsMozoMiddleWare()); 
+    $group->post('/Cerrar', \MesaController::class . ':ModificarUno')->add(new EsSocioMiddleWare()); 
+    $group->get('/MasUsada', \MesaController::class . ':TraerMasUsada')->add(new EsSocioMiddleWare());
 });
 
   $app->group('/Encuesta', function (RouteCollectorProxy $group) {
     $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(new EsSocioMiddleWare());
-    $group->get('/{numMesa}', \EncuestaController::class . ':TraerUno')->add(new EsSocioMiddleWare());
-    $group->post('/Alta', \EncuestaController::class . ':CargarUno'); //cliente      
+    $group->get('/Mesa/{numMesa}', \EncuestaController::class . ':TraerUno')->add(new EsSocioMiddleWare());
+    //cliente 
+    $group->post('/Alta', \EncuestaController::class . ':CargarUno'); 
+
+    $group->get('/ListarEncuesta', \EncuestaController::class . ':TraerLosMejoresComentarios')->add(new EsSocioMiddleWare());    
   });
 
   $app->group('/Pedido', function (RouteCollectorProxy $group) {
@@ -107,9 +110,12 @@ $app->group('/Persona', function (RouteCollectorProxy $group) {
 
 
 $app->get('/Actividad', \ActividadController::class . ':ExportarCSV');
-$app->post('/Actividad', \ActividadController::class . ':ImportarCSV');
+$app->post('/Actividad', \ActividadController::class . ':ImportarCSV')->add(new EsSocioMiddleWare());
 
-$app->post('/Encuesta', \EncuestaController::class . ':CargarUno');
+$app->post('/Cliente', \PedidoController::class . ':obtenerPedidoDeCliente');
+
+
+
 
 
 $app->run();
