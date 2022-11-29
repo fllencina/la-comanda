@@ -193,12 +193,23 @@ class PedidoController extends Pedido
     public function ModificarEstadoItemPedido($request, $response, $args)
     {
       date_default_timezone_set("America/Buenos_Aires");
+      $header = $request->getHeaderLine('Authorization');
+        if(isset($header) && $header)
+        {
+            $token = trim(explode("Bearer", $header)[1]);
+        
+            $data=AutentificadorJWT::ObtenerData($token);
+        }
+      
         $parametros = $request->getParsedBody();
 
         $idpedido = $parametros['idpedido'];
         $idproducto = $parametros['idproducto'];
+        $Producto=Productos::obtenerProductoPorID( $idproducto);
 
-        $ItemPedido=ItemsPedido::obtenerItemPedido($idproducto,$idpedido);
+        if(($data->rol==6 && $Producto->idsector==1)||($data->rol==7 && $Producto->idsector==2)||($data->rol==8 && $Producto->idsector==3))
+        {
+          $ItemPedido=ItemsPedido::obtenerItemPedido($idproducto,$idpedido);
         $ItemPedido->idestado=$parametros['idestado'];
         var_dump($parametros['idestado']);
         if($parametros['idestado']==2)
@@ -213,12 +224,10 @@ class PedidoController extends Pedido
         $ItemPedido->tiempoestimado=$parametros['tiempoestimado'];
         
         $ItemPedido->ModificarItemPedido();
-        $header = $request->getHeaderLine('Authorization');
-        if(isset($header) && $header)
+       
+        if(isset($data) && $data)
         {
-            $token = trim(explode("Bearer", $header)[1]);
-        
-            $data=AutentificadorJWT::ObtenerData($token);
+            
             $UsuarioLogin=Usuario::obtenerUsuario($data->usuario);
             $actividad=new Actividad();
             $actividad->userid=$UsuarioLogin->id;
@@ -231,7 +240,10 @@ class PedidoController extends Pedido
         
 
         $payload = json_encode(array("mensaje" => "Pedido modificado con exito"));
-
+      }
+      else{
+        $payload = json_encode(array("mensaje" => "Solo puede modificar estado de pedidos de su sector"));
+      }
         $response->getBody()->write($payload);
         return $response
           ->withHeader('Content-Type', 'application/json');
